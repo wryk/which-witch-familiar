@@ -1,0 +1,58 @@
+{
+	"title": {
+		"text": "Which witch familiar ?",
+		"emoji": "⛧"
+	},
+	"familiars": [
+		{
+			"race": "MissingNo.",
+			"emoji": "MissingNo.",
+			"description": "MissingNo."
+		},
+		{
+			"race": "renard",
+			"emoji": "🦊",
+			"description": "WIP"
+		},
+		{
+			"race": "corneille",
+			"emoji": "🦅",
+			"description": "WIP"
+		},
+		{
+			"race": "crapaud",
+			"emoji": "🐸",
+			"description": "WIP"
+		},
+		{
+			"race": "chat⋅te",
+			"emoji": "🐈",
+			"description": "WIP"
+		},
+		{
+			"race": "rat⋅e",
+			"emoji": "🐀",
+			"description": "WIP"
+		},
+		{
+			"race": "triton",
+			"emoji": "🦎",
+			"description": "WIP"
+		},
+		{
+			"race": "hibou/chouette",
+			"emoji": "🦉",
+			"description": "WIP"
+		},
+		{
+			"race": "serpent",
+			"emoji": "🐍",
+			"description": "WIP"
+		},
+		{
+			"race": "feu follet",
+			"emoji": "🔥",
+			"description": "WIP"
+		}
+	]
+}
