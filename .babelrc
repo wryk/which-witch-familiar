@@ -1,5 +1,10 @@
 {
-	"presets": ["env"],
+	"presets": ["env", "flow"],
+	"plugins": [
+		["babel-plugin-transform-builtin-extend", {
+			"globals": ["Error", "Array"]
+		}]
+	],
 	"ignore": [
 		"node_modules"
 	]

@@ -1,8 +1,4 @@
 {
-	"title": {
-		"text": "Which witch familiar ?",
-		"emoji": "⛧"
-	},
 	"familiars": [
 		{
 			"race": "MissingNo.",

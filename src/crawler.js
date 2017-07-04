@@ -1,8 +1,6 @@
-export class NotFoundError extends Error {
-	constructor(instance, username, response) {
-		super()
-		this.instance = instance
-		this.username = username
+export class ResponseError extends Error {
+	constructor(response) {
+		super(response.statusText)
 		this.response = response
 	}
 }
@@ -17,11 +15,9 @@ function handleResponse(response) {
 	if (response.ok) {
 		return response.text()
 	} else {
-		if (response.status === 404) {
-			throw new NotFoundError(instance, username)
-		} else {
-			throw new Error()
-		}
+		const error = new ResponseError(response)
+		console.log(error)
+		throw error
 	}
 }
 

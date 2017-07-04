@@ -1,5 +1,6 @@
+import phonetic from 'phonetic'
+
 import { fetchAccountId } from './crawler'
-import { generateName } from './name'
 
 import data from './app.json'
 
@@ -11,14 +12,19 @@ export function fetchAccountFamiliar(instance, username) {
 			const familiar = Object.assign(
 				{},
 				data.familiars[familiarId],
-				{ name: generateName(instance, username, familiarId) }
+				{ name: generateName(instance, username) }
 			)
 
 			return familiar
 		})
 }
 
-// number -> number -> number
+export function generateName(instance, username) {
+	return phonetic.generate({
+		seed: `@${username}@${instance}`
+	})
+}
+
 export function digitalRoot(base, number) {
 	while (number >= base) {
 		number = digitalSum(base, number)
@@ -27,7 +33,6 @@ export function digitalRoot(base, number) {
 	return number
 }
 
-// number -> number -> number
 export function digitalSum(base, number) {
 	let sum = 0
 
