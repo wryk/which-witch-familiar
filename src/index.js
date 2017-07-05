@@ -1,7 +1,6 @@
+import { start, html, pull } from 'inu'
+
 import './app.styl'
-
-import { start, html, pull }  from 'inu'
-
 import * as app from './app'
 
 const node = document.querySelector('main')

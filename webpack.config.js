@@ -1,12 +1,18 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const resolve = require('path').resolve
 
-var resolve = require('path').resolve.bind(null, __dirname);
+const Clean = require('clean-webpack-plugin')
+const ExtractText = require('extract-text-webpack-plugin')
+const Favicons = require('favicons-webpack-plugin')
+const Html = require('html-webpack-plugin')
+
+const DIST = resolve(__dirname, 'dist')
+const SRC = resolve(__dirname, 'src')
 
 module.exports = {
-	entry: resolve('src/index.js'),
+	entry: resolve(SRC, 'index.js'),
 	output: {
-		path: resolve('build'),
-		filename: 'app.bundle.js'
+		path: DIST,
+		filename: 'app.js'
 	},
 	module: {
 		rules: [
@@ -31,16 +37,23 @@ module.exports = {
 			},
 			{
 				test: /\.styl$/,
-				use: [
-					'style-loader',
-					'css-loader',
-					'stylus-loader'
-				]
+				use: ExtractText.extract({
+					fallback: 'style-loader',
+					use: [
+						'css-loader',
+						'stylus-loader'
+					]
+				})
 			}
 		]
 	},
-	plugins: [new HtmlWebpackPlugin({
-		template: resolve('src/index.pug'),
-		hash: false
-	})]
-};
+	plugins: [
+		new Clean([resolve(DIST, '*')]),
+		new Favicons(resolve(SRC, 'favicon.png')),
+		new Html({
+			template: resolve(SRC, 'index.pug'),
+			hash: false
+		}),
+		new ExtractText('app.css')
+	]
+}

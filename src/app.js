@@ -143,7 +143,7 @@ function introView({ account }, dispatch) {
 function formView(model: Model, dispatch: (Action) => void): HTMLElement {
 	return html`
 		<form onsubmit=${submit}>
-			<label for="search">Nom</label>
+			<label for="search">Nom (pseudo@instance)</label>
 
 			<input
 				type="text"
