@@ -3,7 +3,6 @@
 import { html, pull } from 'inu'
 import pullPromise from 'pull-promise'
 import pullCatch from 'pull-catch'
-import formToObject from 'form-to-object'
 
 import { ResponseError } from './crawler'
 import { fetchAccountFamiliar } from './familiar'
