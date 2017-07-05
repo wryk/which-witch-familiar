@@ -1,27 +1,32 @@
+// @flow
+
+import type { Instance, Username, Familiar } from './model'
+
 export class ResponseError extends Error {
-	constructor(response) {
+	response: Response
+
+	constructor(response: Response) {
 		super(response.statusText)
 		this.response = response
 	}
 }
 
-export function fetchAccountId(instance, username) {
+export function fetchAccountId(instance: Instance, username: Username): Promise<number> {
 	return fetch(profileUrl(instance, username))
 		.then(handleResponse)
 		.then(extractAccountId)
 }
 
-function handleResponse(response) {
+function handleResponse(response: Response): Promise<string> {
 	if (response.ok) {
 		return response.text()
 	} else {
-		const error = new ResponseError(response)
-		console.log(error)
-		throw error
+		throw new ResponseError(response)
 	}
 }
 
-function extractAccountId(text) {
+function extractAccountId(text: string): number {
+	// $FlowFixMe : flow typing is wrong (createContextualFragment return a DocumentFragment, not a Node)
 	return +document
 		.createRange()
 		.createContextualFragment(text)
@@ -31,6 +36,6 @@ function extractAccountId(text) {
 		.pop()
 }
 
-export function profileUrl(instance, username) {
+export function profileUrl(instance: Instance, username: Username): string {
 	return `https://${instance}/@${username}`
 }

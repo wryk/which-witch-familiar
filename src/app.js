@@ -8,32 +8,17 @@ import formToObject from 'form-to-object'
 import { ResponseError } from './crawler'
 import { fetchAccountFamiliar } from './familiar'
 
+import type { Instance, Username, Account, Familiar } from './model'
+
 type Model = {
-	instance: Instance,
-	username: Username,
+	search: Instance,
 	account: ?Account,
 	familiar : ?Familiar,
 	error: ?Object
 }
 
-type Instance = string
-type Username = string
-
-type Account = {
-	instance: Instance,
-	username: Username
-}
-
-type Familiar = {
-	name: string,
-	race: string,
-	emoji: string,
-	description: string
-}
-
 type Action
-	= { type: 'SET_INSTANCE', payload: Instance }
-	| { type: 'SET_USERNAME', payload: Username }
+	= { type: 'SET_SEARCH', payload: string }
 	| { type: 'SUBMIT', payload: Account }
 	| { type: 'SET_FAMILIAR', payload: Familiar }
 	| { type: 'SET_FAMILIAR_ERROR', payload: Object }
@@ -41,10 +26,11 @@ type Action
 type Effect
 	= { type: 'FETCH_FAMILIAR', payload: Account }
 
+const RE = /^(?:@)?(.+)@(.+)$/
+
 export const init = (): { model: Model, effect?: Effect } => ({
 	model: {
-		instance: '',
-		username: '',
+		search: '',
 		account: null,
 		familiar: null,
 		error: null
@@ -56,22 +42,10 @@ export const update = (model: Model, action: Action): { model: Model, effect?: E
 		default:
 			throw new Error('unknow action')
 
-		case 'SET_INSTANCE':
+		case 'SET_SEARCH':
 			return {
 				model: {
-					instance: action.payload,
-					username: model.username,
-					account: model.account,
-					familiar: model.familiar,
-					error: model.error
-				}
-			}
-
-		case 'SET_USERNAME':
-			return {
-				model: {
-					instance: model.instance,
-					username: action.payload,
+					search: action.payload,
 					account: model.account,
 					familiar: model.familiar,
 					error: model.error
@@ -79,22 +53,23 @@ export const update = (model: Model, action: Action): { model: Model, effect?: E
 			}
 
 		case 'SUBMIT':
+			const [, username, instance] = action.payload.match(RE)
+			const account = { username, instance }
+
 			return {
 				model: {
-					instance: model.instance,
-					username: model.username,
-					account: action.payload,
+					search: model.search,
+					account: account,
 					familiar: null,
 					error: null
 				},
-				effect: { type: 'FETCH_FAMILIAR', payload: action.payload }
+				effect: { type: 'FETCH_FAMILIAR', payload: account }
 			}
 
 		case 'SET_FAMILIAR':
 			return {
 				model: {
-					instance: model.instance,
-					username: model.username,
+					search: model.search,
 					account: model.account,
 					familiar: action.payload,
 					error: null
@@ -104,8 +79,7 @@ export const update = (model: Model, action: Action): { model: Model, effect?: E
 		case 'SET_FAMILIAR_ERROR':
 			return {
 				model: {
-					instance: model.instance,
-					username: model.username,
+					search: model.search,
 					account: model.account,
 					familiar: null,
 					error: action.payload
@@ -168,56 +142,38 @@ function introView({ account }, dispatch) {
 
 function formView(model: Model, dispatch: (Action) => void): HTMLElement {
 	return html`
-		<section class="form">
-			<form onsubmit=${submit}>
-				<p>
-					Renseigne ton <label for="username">nom (pseudonyme)</label> et ta <label for="instance">ville (instance)</label> :
-				</p>
+		<form onsubmit=${submit}>
+			<label for="search">Nom</label>
 
+			<input
+				type="text"
+				id="search"
+				name="search"
+				required
+				pattern="${RE.source}"
+				placeholder="wryk@witches.town"
+				value="${model.search}"
+				oninput=${setSearch}
+			/>
 
-				<input
-					required
-					id="username"
-					type="text"
-					name="username"
-					placeholder="wryk"
-					value="${model.username}"
-					oninput=${setUsername}
-				/>@<input
-					required
-					id="instance"
-					type="text"
-					name="instance"
-					placeholder="witches.town"
-					value="${model.instance}"
-					oninput=${setInstance}
-				/>
-
-				<button type="submit" class="button">Trouve mon familier !</button>
-			</form>
-		</section>
+			<button type="submit" class="submit">Trouve mon familier !</button>
+		</form>
 	`
 
-	function setInstance(event) {
+	function setSearch(event) {
 		dispatch({
-			type: 'SET_INSTANCE',
+			type: 'SET_SEARCH',
 			payload: event.target.value
 		})
 	}
 
-	function setUsername(event) {
-		dispatch({
-			type: 'SET_USERNAME',
-			payload: event.target.value
-		})
-	}
 
 	function submit(event) {
 		event.preventDefault()
 
 		dispatch({
 			type: 'SUBMIT',
-			payload: formToObject(event.target)
+			payload: model.search
 		})
 	}
 }
@@ -261,7 +217,7 @@ function familiarResultView({ account, familiar }, dispatch) {
 			<div class="familiar">
 				<header>${familiar.emoji} ${familiar.name} ${familiar.emoji}</header>
 				<p>
-					Voici <b>${familiar.name}</b>, le familier de <b>${account.username}@${account.instance}</b>.
+					Voici <b>${familiar.name}</b>, le familier de <a href="https://${account.instance}/@${account.username}">${account.username}@${account.instance}</a>.
 					<br>
 					C'est un⋅e <b>${familiar.race}</b> ${familiar.emoji}.
 				</p>
