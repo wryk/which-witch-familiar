@@ -5,7 +5,7 @@
   "author": "wryk <wryk@wryk.moe>",
   "license": "MIT",
   "scripts": {
-    "deploy": "npm run deploy:clean && npm run deploy:build && npm run deploy:push",
+    "deploy": "npm run deploy:build && npm run deploy:push",
     "deploy:build": "webpack",
     "deploy:push": "gh-pages -d dist",
     "dev": "webpack-dev-server"
